@@ -1,0 +1,23 @@
+[build]
+command = "npm run build"   # 동일
+publish = "build"           # ✅ CRA는 build/ (Vite는 dist/)
+
+[dev]
+command = "npm start"       # ✅ CRA dev 명령
+targetPort = 3000           # CRA dev 서버 포트
+port = 8888                 # Netlify Dev 프록시 포트
+
+[functions]
+directory = "netlify/functions"
+
+# Functions 프록시 (로컬/배포 공통)
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/:splat"
+status = 200
+
+# SPA 라우팅
+[[redirects]]
+from = "/*"
+to = "/public/index.html"
+status = 200

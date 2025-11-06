@@ -1,0 +1,11 @@
+/* 선택된 row 색상 커스터마이징 */
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+    background: var(--yellow-100) !important;
+    /*color: var(--surface-900) !important;*/
+    transition: background 0.2s ease-in-out;
+}
+
+/* hover 시도 구분되게 */
+.p-datatable .p-datatable-tbody > tr:hover:not(.p-highlight) {
+    background: var(--surface-hover) !important;
+}
