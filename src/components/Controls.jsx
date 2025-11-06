@@ -16,18 +16,26 @@ export default function Controls() {
     const {inputText, setInputText, result, setResult} = useAppStore();
 
 
-    const [local, setLocal] = useState(inputText);
+    const [localText, setLocalText] = useState(inputText);
     // 외부에서 전역값이 바뀌면 로컬도 동기화 (예: 테이블 클릭)
-    useEffect(() => setLocal(inputText), [inputText]);
+    useEffect(() => setLocalText(inputText), [inputText]);
 
-    const commit = () => setInputText(local);
+    const commit = () => {
+        setInputText(localText);
+        onSearch()
+            .then((res) => {
+            })
+            .catch((err) => {
+            })
+    }
 
 
     async function onSearch() {
-        if (!inputText.trim()) return;
+        if (!localText.trim()) return;
+
         setLoading(true);
         try {
-            const r = await geocode(inputText);
+            const r = await geocode(localText);
             setResult(r);
             toast.current?.show({
                 severity: 'success',
@@ -64,17 +72,12 @@ export default function Controls() {
 
     function onChange(e) {
         const {value} = e.target;
-        setLocal(value);
+        setLocalText(value);
     }
 
     function onKeyDown(e) {
         if (e.key === 'Enter') {
             commit();
-            onSearch()
-                .then((res) => {
-                })
-                .catch((err) => {
-                })
         }
     }
 
@@ -108,7 +111,7 @@ export default function Controls() {
                     />
 
                     <InputText
-                        value={local}
+                        value={localText}
                         onChange={onChange}
                         onKeyDown={onKeyDown}
                         onBlur={commit}
