@@ -1,11 +1,11 @@
-import {useState, useRef} from 'react';
+import {useState, useRef, useEffect, useMemo} from 'react';
 
 import {Tooltip} from 'primereact/tooltip';
 import {InputText} from 'primereact/inputtext';
 import {Button} from 'primereact/button';
 import {Toast} from 'primereact/toast';
 
-import {geocode} from '../lib/geocode.js';
+import {geocode, MAKE_YR_URL} from '../lib/geocode.js';
 import {useAppStore} from '../store/useAppStore.js';
 import {shareToKakao} from "../lib/kakao.js";
 
@@ -14,6 +14,14 @@ export default function Controls() {
     const [loading, setLoading] = useState(false);
 
     const {inputText, setInputText, result, setResult} = useAppStore();
+
+
+    const [local, setLocal] = useState(inputText);
+    // 외부에서 전역값이 바뀌면 로컬도 동기화 (예: 테이블 클릭)
+    useEffect(() => setLocal(inputText), [inputText]);
+
+    const commit = () => setInputText(local);
+
 
     async function onSearch() {
         if (!inputText.trim()) return;
@@ -50,12 +58,24 @@ export default function Controls() {
             return;
         }
         const {lat, lon} = result;
-        const url = `https://www.yr.no/en/forecast/daily-table/${lat.toFixed(3)},${lon.toFixed(3)}`;
+        const url = MAKE_YR_URL(lat, lon)
         shareToKakao({lat, lon, title: inputText, url});
     }
 
+    function onChange(e) {
+        const {value} = e.target;
+        setLocal(value);
+    }
+
     function onKeyDown(e) {
-        if (e.key === 'Enter') onSearch();
+        if (e.key === 'Enter') {
+            commit();
+            onSearch()
+                .then((res) => {
+                })
+                .catch((err) => {
+                })
+        }
     }
 
     function onClear() {
@@ -88,12 +108,14 @@ export default function Controls() {
                     />
 
                     <InputText
-                        value={inputText}
-                        onChange={(e) => setInputText(e.target.value)}
+                        value={local}
+                        onChange={onChange}
                         onKeyDown={onKeyDown}
+                        onBlur={commit}
                         placeholder="예: 제주특별자치도 제주시 첨단로 242"
                         className="w-full"
                     />
+
                     <Button
                         icon="pi pi-times"
                         severity="danger"
@@ -113,8 +135,10 @@ export default function Controls() {
                 <div className="col-12 lg:col flex justify-content-end align-items-end gap-2">
                     <Button
                         icon="pi pi-search"
+                        size="small"
                         severity="primary"
                         label="좌표 조회"
+                        outlined={true}
                         onClick={onSearch}
                         loading={loading}
                         disabled={!inputText.trim()}
@@ -129,8 +153,11 @@ export default function Controls() {
 
                     <Button
                         icon="pi pi-share-alt"
+                        size="small"
                         label="공유"
+                        outlined={true}
                         severity="warning"
+                        //style={{backgroundColor:'var(--yellow-500)', color: 'var(--gray-900)', border: '1px solid var(--yellow-500)'}}
                         onClick={onShare}
                         disabled={!result}
                         tooltip={!result ? '좌표를 먼저 선택하세요' : undefined}
@@ -142,8 +169,7 @@ export default function Controls() {
                         }}
                     />
 
-                    <Button label="예시" severity="secondary"
-                            onClick={() => setInputText('제주특별자치도 제주시 첨단로 242')}/>
+                    {/*<Button label="예시" severity="secondary" onClick={() => setInputText('제주특별자치도 제주시 첨단로 242')}/>*/}
                 </div>
             </div>
         </div>

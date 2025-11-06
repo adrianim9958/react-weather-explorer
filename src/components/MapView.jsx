@@ -3,9 +3,8 @@ import {MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents} from 'reac
 import {Button} from 'primereact/button';
 
 import {useAppStore} from '../store/useAppStore.js';
+import {MAKE_YR_URL} from "../lib/geocode";
 
-const YR = (lat, lon) =>
-    `https://www.yr.no/en/forecast/daily-table/${Number(lat).toFixed(3)},${Number(lon).toFixed(3)}`;
 
 // 지도 클릭 시 전역 상태에 좌표 저장
 function ClickHandler() {
@@ -40,7 +39,7 @@ function MarkerWithAutoPopup({position, displayName}) {
                 <b>{displayName || '선택한 좌표'}</b><br/>
                 lat: {position[0]}<br/>
                 lon: {position[1]}<br/>
-                <a href={YR(position[0], position[1])} target="_blank" rel="noreferrer">YR 날씨 열기</a>
+                <a href={MAKE_YR_URL(position[0], position[1])} target="_blank" rel="noreferrer">YR 날씨 열기</a>
             </Popup>
         </Marker>
     );
@@ -59,9 +58,13 @@ export default function MapView() {
 
     return (
         <div className="flex flex-column gap-2">
-            <div className="flex justify-content-end">
-                <Button label="선택삭제" severity="danger" size="small" disabled={!result} onClick={onDelete}/>
-            </div>
+            {result && (
+                <div className="flex justify-content-end">
+                    <Button label="선택해제" severity="danger" size="small" disabled={!result} onClick={onDelete}
+                            icon="pi pi-times" outlined={true}/>
+                </div>
+            )}
+
             <MapContainer center={center} zoom={11} style={{height: 480}}>
                 <TileLayer
                     attribution="&copy; OpenStreetMap"

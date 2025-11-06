@@ -19,6 +19,9 @@
     };
 }*/
 
+export const YR_URL = "https://www.yr.no/en/forecast/daily-table"
+export const MAKE_YR_URL = (lat, lon) => `${YR_URL}/${Number(lat).toFixed(3)},${Number(lon).toFixed(3)}`;
+
 export async function geocode(query) {
     const url = new URL('/api/geocode', window.location.origin);
     url.searchParams.set('q', String(query || '').trim());

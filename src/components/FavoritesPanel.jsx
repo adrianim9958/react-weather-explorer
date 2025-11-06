@@ -7,8 +7,8 @@ import {ConfirmDialog, confirmDialog} from 'primereact/confirmdialog';
 
 import {addFav, loadFavs, clearFavs, removeFavByAt, togglePinByAt} from '../lib/favorites.js';
 import {useAppStore} from '../store/useAppStore.js';
+import {MAKE_YR_URL} from "../lib/geocode";
 
-const toYR = (lat, lon) => `https://www.yr.no/en/forecast/daily-table/${lat.toFixed(3)},${lon.toFixed(3)}`;
 
 export default function FavoritesPanel() {
     const op = useRef(null);
@@ -79,23 +79,15 @@ export default function FavoritesPanel() {
         <div className="flex align-items-center justify-content-end gap-2">
             <Toast ref={toast} position="bottom-right"/>
             <ConfirmDialog/>
-            {/*<Tooltip target=".disabled-button" position="left"/>*/}
 
-            <Button severity="warning" onClick={(e) => op.current.toggle(e)}>
-                <i className="pi pi-star mr-2" style={{color: 'var(--yellow-500)'}}/>
+            <Button size="small" severity="warning" onClick={(e) => op.current.toggle(e)}>
+                <i className="pi pi-star-fill mr-2" style={{color: 'var(--yellow-500)'}}/>
                 <span>즐겨찾기</span>
             </Button>
 
-            {/*<span className="disabled-button" data-pr-tooltip={!result ? '좌표를 먼저 선택하세요' : undefined}>
-                <Button
-                    icon="pi pi-plus"
-                    severity="success"
-                    onClick={onAdd}
-                    disabled={!result}
-                />
-            </span>*/}
             <Button
                 icon="pi pi-plus"
+                size="small"
                 severity="success"
                 onClick={onAdd}
                 disabled={!result}
@@ -111,7 +103,7 @@ export default function FavoritesPanel() {
             <OverlayPanel ref={op} dismissable>
                 <header className="flex align-items-center justify-content-between gap-3 mb-2">
                     <div className="flex align-items-center gap-2">
-                        <i className="pi pi-star"/>
+                        <i className="pi pi-star-fill"/>
                         <span>즐겨찾기</span>
                     </div>
                     <Button size="small" label="전체삭제" onClick={onClearAll} severity="danger" outlined/>
@@ -123,7 +115,7 @@ export default function FavoritesPanel() {
                     {list.map((it) => (
                         <li key={it.at} className="py-2 border-bottom-1 surface-border">
                             <div className="grid">
-                                <div className="col-12 lg:col-6 flex flex-column">
+                                <div className="col-12 lg:col-3 flex flex-column">
                                     <div className="text-sm">
                                         {it.pinned && <i className="pi pi-thumbtack mr-2" title="고정됨"/>}
                                         {it.displayName || '좌표'}
@@ -133,18 +125,20 @@ export default function FavoritesPanel() {
                                     </div>
                                 </div>
 
-                                <div className="col-12 lg:col-6 flex align-items-center justify-content-end gap-2">
+                                <div className="col-12 lg:col-9 flex align-items-center justify-content-end gap-2">
                                     <Button
                                         size="small"
                                         label="보기"
                                         icon="pi pi-eye"
+                                        severity="primary"
+                                        outlined={true}
                                         onClick={() => onView(it)}
                                     />
                                     <Button
                                         size="small"
                                         label={it.pinned ? '고정 해제' : '고정'}
                                         icon="pi pi-thumbtack"
-                                        severity={it.pinned ? 'help' : 'secondary'}
+                                        severity="help"
                                         outlined={!it.pinned}
                                         onClick={() => onPin(it.at)}
                                     />
@@ -153,7 +147,7 @@ export default function FavoritesPanel() {
                                         label="삭제"
                                         icon="pi pi-trash"
                                         severity="danger"
-                                        text
+                                        outlined={true}
                                         onClick={() => onDelete(it.at)}
                                     />
                                 </div>
@@ -161,7 +155,8 @@ export default function FavoritesPanel() {
 
                             {/* (선택) 바로가기 링크 */}
                             <div className="mt-1">
-                                <a className="text-xs" href={toYR(it.lat, it.lon)} target="_blank" rel="noreferrer">
+                                <a className="text-xs" href={MAKE_YR_URL(it.lat, it.lon)} target="_blank"
+                                   rel="noreferrer">
                                     YR 날씨 열기
                                 </a>
                             </div>

@@ -72,17 +72,6 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
                     <span className="font-semibold">{title}</span>
                 </div>
 
-                {/* 글로벌 필터: 이름/주소 동시 검색 */}
-                {/*<span className="p-input-icon-left" onClick={(e) => e.stopPropagation()}>
-                      <i className="pi pi-filter"/>
-                      <InputText
-                          value={global}
-                          onChange={(e) => onGlobalChange(e.target.value)}
-                          placeholder="이름/주소 검색"
-                          className="ml-5 w-12rem md:w-18rem"
-                      />
-                </span>*/}
-
                 <div className="col-9 p-inputgroup ">
                     <span className="p-inputgroup-addon">
                         <i className="pi pi-filter"></i>
@@ -103,6 +92,7 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
             {!collapsed && (
                 <DataTable
                     value={data}
+                    dataKey="key"
                     size="small"
                     scrollable
                     scrollHeight="340px"
@@ -112,7 +102,6 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
                     selectionMode="single"
                     selection={selectionObj}
                     onSelectionChange={onRowSelect}
-                    dataKey="key"
                     className="selectable-table"
                 >
                     <Column field="name" header="이름" sortable/>

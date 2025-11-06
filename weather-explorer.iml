@@ -6,5 +6,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="00c0c74a099457da6ab1cc846fdae8556165a7a982e8923f0b6860afdcdf0504" level="project" />
   </component>
 </module>
