@@ -5,6 +5,7 @@ import Controls from '../components/Controls.jsx';
 import MapView from '../components/MapView.jsx';
 import FavoritesPanel from '../components/FavoritesPanel.jsx';
 import TablesSection from "../components/TablesSection.jsx";
+import AdBanner from "../components/AdBanner";
 
 export default function Home() {
     return (
@@ -50,7 +51,9 @@ export default function Home() {
 
             <Divider/>
 
-
+            <div className="flex justify-content-center align-items-center">
+                <AdBanner slot="2202214437"/>
+            </div>
         </div>
     );
 }
