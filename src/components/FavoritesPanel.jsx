@@ -6,8 +6,8 @@ import {Toast} from 'primereact/toast';
 import {ConfirmDialog, confirmDialog} from 'primereact/confirmdialog';
 
 import {addFav, loadFavs, clearFavs, removeFavByAt, togglePinByAt} from '../lib/favorites.js';
-import {useAppStore} from '../store/useAppStore.js';
 import {MAKE_YR_URL} from "../lib/geocode";
+import {useAppStore} from '../store/useAppStore.js';
 
 
 export default function FavoritesPanel() {

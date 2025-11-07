@@ -1,9 +1,11 @@
-import {useEffect, useRef} from 'react';
-import {MapContainer, TileLayer, Marker, Popup, useMap, useMapEvents} from 'react-leaflet';
+import {useRef} from 'react';
+import {MapContainer, TileLayer, useMapEvents} from 'react-leaflet';
 import {Button} from 'primereact/button';
+import {Toast} from 'primereact/toast';
+
+import MarkerWithAutoPopup from "./MarkerWithAutoPopup";
 
 import {useAppStore} from '../store/useAppStore.js';
-import {MAKE_YR_URL} from "../lib/geocode";
 
 
 // 지도 클릭 시 전역 상태에 좌표 저장
@@ -17,35 +19,10 @@ function ClickHandler() {
     return null;
 }
 
-// result가 바뀔 때마다 지도 이동 + 팝업 자동 오픈
-function MarkerWithAutoPopup({position, displayName}) {
-    const markerRef = useRef(null);
-    const map = useMap();
-
-    useEffect(() => {
-        if (!position) return;
-        // 지도 부드럽게 이동 (줌은 유지)
-        map.flyTo(position, map.getZoom(), {duration: 0.6});
-        // 마커 팝업 열기
-        // react-leaflet v4: markerRef.current?.openPopup()
-        // (ref에는 Leaflet Marker 인스턴스가 들어옴)
-        const m = markerRef.current;
-        if (m && m.openPopup) m.openPopup();
-    }, [position?.[0], position?.[1]]); // lat/lon 변할 때만
-
-    return (
-        <Marker position={position} ref={markerRef}>
-            <Popup autoPan={true}>
-                <b>{displayName || '선택한 좌표'}</b><br/>
-                lat: {position[0]}<br/>
-                lon: {position[1]}<br/>
-                <a href={MAKE_YR_URL(position[0], position[1])} target="_blank" rel="noreferrer">YR 날씨 열기</a>
-            </Popup>
-        </Marker>
-    );
-}
 
 export default function MapView() {
+    const toast = useRef(null);
+
     const {result, setResult, setInputText} = useAppStore();
     const center = [37.5665, 126.978]; // 초기 서울
 
@@ -56,8 +33,31 @@ export default function MapView() {
         setInputText("")
     }
 
+    const onCopy = async (lat, lon) => {
+        const text = `lat:${lat.toFixed(6)}, lon:${lon.toFixed(6)}`;
+        try {
+            await navigator.clipboard.writeText(text);
+
+            toast.current?.show({
+                severity: 'success',
+                summary: '복사되었습니다',
+                detail: text,
+                life: 1500,
+            });
+        } catch {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+        }
+    }
+
     return (
         <div className="flex flex-column gap-2">
+            <Toast ref={toast} position="bottom-right"/>
+
             {result && (
                 <div className="flex justify-content-end">
                     <Button label="선택해제" severity="danger" size="small" disabled={!result} onClick={onDelete}
@@ -71,7 +71,7 @@ export default function MapView() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 <ClickHandler/>
-                {pos && <MarkerWithAutoPopup position={pos} displayName={result?.displayName}/>}
+                {pos && <MarkerWithAutoPopup position={pos} displayName={result?.displayName} onCopy={onCopy}/>}
             </MapContainer>
         </div>
     );

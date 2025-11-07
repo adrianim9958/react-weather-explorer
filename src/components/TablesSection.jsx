@@ -20,7 +20,7 @@ export default function TablesSection() {
             </div>
             <div className="col-12 lg:col-6">
                 <CollapsibleTable
-                    title="국립공원"
+                    title="산림청"
                     data={NATIONAL_DATA}
                     selectedKey={selected.source === 'nat' ? selected.key : null}
                     onSelect={(key) => setSelected(key ? {source: 'nat', key} : {source: null, key: null})}

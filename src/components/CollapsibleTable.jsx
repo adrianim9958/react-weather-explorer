@@ -5,8 +5,8 @@ import {Column} from 'primereact/column';
 import {InputText} from 'primereact/inputtext';
 import {FilterMatchMode} from 'primereact/api';
 
-import {useAppStore} from '../store/useAppStore.js';
 import {geocode} from "../lib/geocode.js";
+import {useAppStore} from '../store/useAppStore.js';
 
 export function CollapsibleTable({title, data, selectedKey, onSelect}) {
     const toast = useRef(null);

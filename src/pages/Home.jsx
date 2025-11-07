@@ -30,11 +30,11 @@ export default function Home() {
                 </div>
             </div>
 
-            <Divider></Divider>
+            <Divider/>
 
             <TablesSection/>
 
-            <Divider></Divider>
+            <Divider/>
 
             <div className="footer">
                 <div className="text-center">
@@ -47,6 +47,10 @@ export default function Home() {
                     Copyright© 2025 Adrian. All right reserved.
                 </div>
             </div>
+
+            <Divider/>
+
+
         </div>
     );
 }

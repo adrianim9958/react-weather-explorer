@@ -26,7 +26,7 @@ export async function geocode(query) {
     const url = new URL('/api/geocode', window.location.origin);
     url.searchParams.set('q', String(query || '').trim());
 
-    const res = await fetch(url.toString(), { headers: { Accept: 'application/json' }});
+    const res = await fetch(url.toString(), {headers: {Accept: 'application/json'}});
     if (!res.ok) throw new Error(`검색 실패: ${res.status}`);
     const arr = await res.json();
     if (!Array.isArray(arr) || arr.length === 0) throw new Error('결과가 없어요. 더 구체적으로 입력해보세요.');
