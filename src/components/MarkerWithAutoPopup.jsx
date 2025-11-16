@@ -1,6 +1,7 @@
 import {useEffect, useRef} from 'react';
 import {Marker, Popup, useMap} from 'react-leaflet';
 import {Button} from 'primereact/button';
+import L from 'leaflet';
 
 import {MAKE_YR_URL} from "../lib/geocode";
 
@@ -10,14 +11,25 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
 
     useEffect(() => {
         if (!position) return;
-        // 지도 부드럽게 이동 (줌은 유지)
-        map.flyTo(position, map.getZoom(), {duration: 0.6});
-        // 마커 팝업 열기
-        // react-leaflet v4: markerRef.current?.openPopup()
-        // (ref에는 Leaflet Marker 인스턴스가 들어옴)
-        const m = markerRef.current;
-        if (m && m.openPopup) m.openPopup();
-    }, [position?.[0], position?.[1]]); // lat/lon 변할 때만
+
+        // 1) 클릭 좌표를 LatLng로 만들고 → 화면 픽셀 좌표로 변환
+        const latLng = L.latLng(position[0], position[1]);
+        const pt = map.latLngToContainerPoint(latLng);
+
+        // 2) 화면 중심보다 '살짝 아래'에 보이도록 Y를 줄여서(=위로 올려서) 재계산
+        //    비율 기반(뷰포트 높이의 30%) + 최소/최대 클램프
+        const viewH = map.getSize().y;
+        const offsetY = Math.max(50, Math.min(160, Math.round(viewH * 0.3)));
+
+        const adjustedPt = L.point(pt.x, pt.y - offsetY);
+        const adjustedLatLng = map.containerPointToLatLng(adjustedPt);
+
+        // 3) 부드럽게 이동 (현재 줌 유지)
+        map.flyTo(adjustedLatLng, map.getZoom(), { duration: 0.6 });
+
+        // 4) 팝업 자동 오픈
+        setTimeout(() => markerRef.current?.openPopup(), 60);
+    }, [position, map]);
 
 
     return (

@@ -1,5 +1,5 @@
 // src/components/AdBanner.jsx
-import { useEffect, useRef } from "react";
+import {useEffect, useRef} from "react";
 
 /**
  * AdSense banner with re-init guards
@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
  * - StrictMode/리렌더 대비
  */
 export default function AdBanner({
-                                     slot = "1234567890",       // 실제 data-ad-slot 로 교체
+                                     slot = "2202214437",
                                      format = "auto",
                                      responsive = "true",
                                      test = process.env.NODE_ENV !== "production",
@@ -41,12 +41,12 @@ export default function AdBanner({
         <ins
             ref={insRef}
             className={`adsbygoogle ${className || ""}`}
-            style={{ display: "block", ...(style || {}) }}
+            style={{display: "block", ...(style || {})}}
             data-ad-client="ca-pub-5238834608291165"
             data-ad-slot={slot}
             data-ad-format={format}
             data-full-width-responsive={responsive}
-            {...(test ? { "data-adtest": "on" } : {})}
+            {...(test ? {"data-adtest": "on"} : {})}
         />
     );
 }

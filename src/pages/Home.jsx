@@ -1,6 +1,5 @@
 import {Divider} from 'primereact/divider';
 
-
 import Controls from '../components/Controls.jsx';
 import MapView from '../components/MapView.jsx';
 import FavoritesPanel from '../components/FavoritesPanel.jsx';
@@ -52,7 +51,7 @@ export default function Home() {
             <Divider/>
 
             <div className="flex justify-content-center align-items-center">
-                <AdBanner slot="2202214437"/>
+                <AdBanner/>
             </div>
         </div>
     );
