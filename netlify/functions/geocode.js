@@ -16,9 +16,8 @@ export async function handler(event) {
         const res = await fetch(url.toString(), {
             headers: {
                 'Accept': 'application/json',
-                // Nominatim은 UA/연락처가 필요합니다 — 본인 이메일로 바꾸세요.
-                'User-Agent': 'mt-weather-react/1.0 (contact: your-email@example.com)',
-                'Referer': 'https://your-site.netlify.app/'
+                'User-Agent': 'react-weather-explorer/1.0 (contact: akabongee@gmail.com)',
+                'Referer': 'https://react-weather-explorer.netlify.app/'
             }
         });
 
