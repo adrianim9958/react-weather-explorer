@@ -53,3 +53,17 @@ export function togglePinByAt(at) {
     saveFavs(list);
     return loadFavs();
 }
+
+export function updateFavNameByAt(at, displayName) {
+    const list = loadFavs();
+    const i = list.findIndex((x) => x.at === at);
+    if (i >= 0) {
+        list[i] = {
+            ...list[i],
+            displayName: (displayName || '').trim(),
+        };
+        saveFavs(list);
+    }
+    return loadFavs();
+}
+

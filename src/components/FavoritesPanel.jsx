@@ -5,7 +5,7 @@ import {Button} from 'primereact/button';
 import {Toast} from 'primereact/toast';
 import {ConfirmDialog, confirmDialog} from 'primereact/confirmdialog';
 
-import {addFav, loadFavs, clearFavs, removeFavByAt, togglePinByAt} from '../lib/favorites.js';
+import {addFav, clearFavs, loadFavs, removeFavByAt, togglePinByAt, updateFavNameByAt} from '../lib/favorites.js';
 import {MAKE_YR_URL} from "../lib/geocode";
 import {useAppStore} from '../store/useAppStore.js';
 
@@ -20,6 +20,26 @@ export default function FavoritesPanel() {
     useEffect(() => {
         setList(loadFavs());
     }, []);
+
+    function onRename(item) {
+        const currentName = item.displayName || '';
+        const next = window.prompt('새 이름을 입력하세요', currentName);
+
+        // 취소 눌렀을 때
+        if (next === null) return;
+
+        const trimmed = next.trim();
+
+        const updatedList = updateFavNameByAt(item.at, trimmed);
+        setList(updatedList);
+
+        toast.current?.show({
+            severity: 'success',
+            summary: '이름 변경',
+            detail: trimmed ? `"${trimmed}"(으)로 변경했습니다.` : '이름을 비워두었습니다.',
+            life: 1200,
+        });
+    }
 
     function onAdd() {
         if (!result) return;
@@ -134,6 +154,15 @@ export default function FavoritesPanel() {
                                         outlined={true}
                                         onClick={() => onView(it)}
                                     />
+                                    <Button
+                                        size="small"
+                                        label="이름 변경"
+                                        icon="pi pi-pencil"
+                                        severity="secondary"
+                                        outlined={true}
+                                        onClick={() => onRename(it)}
+                                    />
+
                                     <Button
                                         size="small"
                                         label={it.pinned ? '고정 해제' : '고정'}

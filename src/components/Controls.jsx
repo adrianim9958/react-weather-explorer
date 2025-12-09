@@ -1,4 +1,4 @@
-import {useState, useRef, useEffect, useMemo} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 import {Tooltip} from 'primereact/tooltip';
 import {InputText} from 'primereact/inputtext';
@@ -21,6 +21,12 @@ export default function Controls() {
     useEffect(() => setLocalText(inputText), [inputText]);
 
     const commit = () => {
+        // 변경되지 않았다면 검색도 안 한다
+        const trimmedOld = inputText.trim();
+        const trimmedNew = localText.trim();
+
+        if (trimmedOld === trimmedNew) return;
+
         setInputText(localText);
         onSearch()
             .then((res) => {
