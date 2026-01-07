@@ -4,6 +4,9 @@ import {OverlayPanel} from 'primereact/overlaypanel';
 import {Button} from 'primereact/button';
 import {Toast} from 'primereact/toast';
 import {ConfirmDialog, confirmDialog} from 'primereact/confirmdialog';
+import { Dialog } from 'primereact/dialog';
+import { InputText } from 'primereact/inputtext';
+
 
 import {addFav, clearFavs, loadFavs, removeFavByAt, togglePinByAt, updateFavNameByAt} from '../lib/favorites.js';
 import {MAKE_YR_URL} from "../lib/geocode";
@@ -17,28 +20,41 @@ export default function FavoritesPanel() {
     const [list, setList] = useState([]);
     const {result, setResult} = useAppStore();
 
+    const [renameTarget, setRenameTarget] = useState(null);
+    const [renameName, setRenameName] = useState('');
+
     useEffect(() => {
         setList(loadFavs());
     }, []);
 
-    function onRename(item) {
-        const currentName = item.displayName || '';
-        const next = window.prompt('새 이름을 입력하세요', currentName);
+    // ⬇ 이름 수정 모달 열기
+    function onOpenRename(item) {
+        setRenameTarget(item);
+        setRenameName(item.displayName || '');
+    }
 
-        // 취소 눌렀을 때
-        if (next === null) return;
+    // ⬇ 이름 수정 모달 닫기
+    function onCloseRename() {
+        setRenameTarget(null);
+        setRenameName('');
+    }
 
-        const trimmed = next.trim();
+    // ⬇ 실제 이름 저장
+    function onSaveRename() {
+        if (!renameTarget) return;
 
-        const updatedList = updateFavNameByAt(item.at, trimmed);
-        setList(updatedList);
+        const trimmed = (renameName || '').trim();
+        const next = updateFavNameByAt(renameTarget.at, trimmed);
+        setList(next);
 
         toast.current?.show({
             severity: 'success',
             summary: '이름 변경',
-            detail: trimmed ? `"${trimmed}"(으)로 변경했습니다.` : '이름을 비워두었습니다.',
-            life: 1200,
+            detail: trimmed ? `"${trimmed}"(으)로 변경했어요.` : '이름을 비웠어요.',
+            life: 1500,
         });
+
+        onCloseRename();
     }
 
     function onAdd() {
@@ -160,7 +176,7 @@ export default function FavoritesPanel() {
                                         icon="pi pi-pencil"
                                         severity="secondary"
                                         outlined={true}
-                                        onClick={() => onRename(it)}
+                                        onClick={() => onOpenRename(it)}
                                     />
 
                                     <Button
@@ -193,6 +209,44 @@ export default function FavoritesPanel() {
                     ))}
                 </ul>
             </OverlayPanel>
+
+            <Dialog
+                header="즐겨찾기 이름 변경"
+                visible={!!renameTarget}
+                modal
+                style={{width: '360px'}}
+                onHide={onCloseRename}
+                footer={
+                    <div className="flex justify-content-end gap-2">
+                        <Button
+                            label="취소"
+                            text
+                            onClick={onCloseRename}
+                        />
+                        <Button
+                            label="저장"
+                            onClick={onSaveRename}
+                            disabled={!renameName.trim()}
+                        />
+                    </div>
+                }
+            >
+                <div className="flex flex-column gap-2">
+                    <span className="text-sm text-500">
+                        이 좌표에 보여줄 이름을 정해 주세요.
+                    </span>
+                    <InputText
+                        autoFocus
+                        className="w-full"
+                        value={renameName}
+                        placeholder="예: 집 앞 산책 코스"
+                        onChange={(e) => setRenameName(e.target.value)}
+                    />
+                    <small className="text-xs text-500">
+                        지도 위치(lat/lon)는 그대로 두고 이름만 변경됩니다.
+                    </small>
+                </div>
+            </Dialog>
         </div>
     );
 }

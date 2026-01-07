@@ -3,7 +3,7 @@ async function geocodeDirect(query) {
     const url = new URL('https://nominatim.openstreetmap.org/search');
     url.searchParams.set('q', String(query || '').trim());
     url.searchParams.set('format', 'jsonv2');
-    url.searchParams.set('limit', '1');
+    url.searchParams.set('limit', '5');
     url.searchParams.set('addressdetails', '1');
     url.searchParams.set('accept-language', 'ko');
 
@@ -17,12 +17,51 @@ async function geocodeDirect(query) {
         throw new Error('결과가 없어요. 더 구체적으로 입력해보세요.');
     }
 
-    const item = data[0];
-    return {
+    // const item = data[0];
+    // console.log(`geocodeDirect:`, data);
+    // return {
+    //     lat: parseFloat(item.lat),
+    //     lon: parseFloat(item.lon),
+    //     displayName: String(item.display_name ?? ''),
+    // };
+
+    const results = data.map((item) => ({
         lat: parseFloat(item.lat),
         lon: parseFloat(item.lon),
         displayName: String(item.display_name ?? ''),
-    };
+    }));
+    return results;
+
+
+    // const url = new URL('https://photon.komoot.io/api/');
+    // url.searchParams.set('q', String(query || '').trim());
+    // url.searchParams.set('limit', '5');
+    // // Photon은 lang 파라미터를 사용합니다 (en, de, fr, it 중 선택 가능. ko는 제한적일 수 있음)
+    // // url.searchParams.set('lang', 'ko');
+
+    // console.log(`url:`, url.toString);
+
+    // const res = await fetch(url.toString());
+    // if (!res.ok) throw new Error(`검색 실패: ${res.status}`);
+
+    // const data = await res.json();
+
+    // console.log(`geocodeDirect:`, data);
+
+    // // Photon은 데이터가 features 배열 안에 들어있습니다.
+    // if (!data.features || data.features.length === 0) {
+    //     throw new Error('결과가 없어요.');
+    // }
+
+    // const item = data.features[0];
+    // const geometry = item.geometry.coordinates; // [lon, lat] 순서임에 주의!
+    // const properties = item.properties;
+
+    // return {
+    //     lat: geometry[1], // 위도
+    //     lon: geometry[0], // 경도
+    //     displayName: properties.name + (properties.city ? `, ${properties.city}` : ''),
+    // };
 }
 
 // 2) 배포(Netlify)에서: Netlify Function(/api/geocode) 호출
