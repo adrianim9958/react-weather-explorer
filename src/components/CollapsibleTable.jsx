@@ -19,7 +19,7 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
         address: {value: null, matchMode: FilterMatchMode.CONTAINS},
     });
 
-    const {setInputText, setResult} = useAppStore();
+    const {setInputText, setSuggestions} = useAppStore();
 
     const selectionObj = useMemo(
         () => data.find(r => r.key === selectedKey) || null,
@@ -33,9 +33,21 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
         setInputText(query); // Controls 입력창에 반영
 
         try {
-            const r = await geocode(query); // 즉시 지오코딩
-            setResult(r);
-            toast.current?.show({severity: 'success', summary: '좌표 조회', detail: '지도로 이동합니다', life: 1000});
+            const results = await geocode(query); // 즉시 지오코딩
+
+            if (Array.isArray(results) && results.length > 0) {
+                setSuggestions(results);
+            } else if (results && !Array.isArray(results)) {
+                setSuggestions([results]);
+            } else {
+                setSuggestions([]);
+                toast.current?.show({
+                    severity: "warn",
+                    summary: "결과 없음",
+                    detail: "검색 결과가 없습니다.",
+                    life: 1500,
+                });
+            }
         } catch (e) {
             toast.current?.show({severity: 'error', summary: '검색 실패', detail: e?.message || '좌표를 찾지 못했어요', life: 1800});
         }

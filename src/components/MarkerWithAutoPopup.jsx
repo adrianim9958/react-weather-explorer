@@ -10,6 +10,10 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
     const map = useMap();
 
     useEffect(() => {
+        console.log("position ", position)
+    }, [position])
+
+    useEffect(() => {
         if (!position) return;
 
         // 1) 클릭 좌표를 LatLng로 만들고 → 화면 픽셀 좌표로 변환
@@ -25,7 +29,7 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
         const adjustedLatLng = map.containerPointToLatLng(adjustedPt);
 
         // 3) 부드럽게 이동 (현재 줌 유지)
-        map.flyTo(adjustedLatLng, map.getZoom(), { duration: 0.6 });
+        map.flyTo(adjustedLatLng, map.getZoom(), {duration: 0.6});
 
         // 4) 팝업 자동 오픈
         setTimeout(() => markerRef.current?.openPopup(), 60);
@@ -71,8 +75,8 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
                             textAlign: 'center',
                         }}
                     >
-                        <div>lat: {position[0].toFixed(6)}</div>
-                        <div>lon: {position[1].toFixed(6)}</div>
+                        <div>lat: {position[0] ? position[0].toFixed(6) : ""}</div>
+                        <div>lon: {position[1] ? position[1].toFixed(6) : ""}</div>
                     </div>
 
                     <a

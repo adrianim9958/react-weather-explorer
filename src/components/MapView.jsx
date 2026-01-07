@@ -65,7 +65,7 @@ export default function MapView() {
                 </div>
             )}
 
-            <MapContainer center={center} zoom={11} style={{height: 480}}>
+            <MapContainer center={center} zoom={11} style={{height: 720}}>
                 <TileLayer
                     attribution="&copy; OpenStreetMap"
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

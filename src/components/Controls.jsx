@@ -13,9 +13,8 @@ import {useAppStore} from "../store/useAppStore.js";
 export default function Controls() {
     const toast = useRef(null);
     const [loading, setLoading] = useState(false);
-    const [suggestions, setSuggestions] = useState([]);
 
-    const {inputText, setInputText, result, setResult} = useAppStore();
+    const {inputText, setInputText, result, setResult, suggestions, setSuggestions} = useAppStore();
 
     const [localText, setLocalText] = useState(inputText);
     // 외부에서 전역값이 바뀌면 로컬도 동기화 (예: 테이블 클릭)
@@ -42,8 +41,6 @@ export default function Controls() {
         setLoading(true);
         try {
             const results = await geocode(localText);
-
-            console.log("geocode results:", results);
 
             if (Array.isArray(results) && results.length > 0) {
                 setSuggestions(results);
