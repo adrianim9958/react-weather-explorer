@@ -30,6 +30,11 @@ export function CollapsibleTable({title, data, selectedKey, onSelect}) {
         const query = row?.name || row?.address || '';
         if (!query) return;
 
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // 부드럽게 이동
+        });
+
         setInputText(query); // Controls 입력창에 반영
 
         try {

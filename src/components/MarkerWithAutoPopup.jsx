@@ -9,9 +9,10 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
     const markerRef = useRef(null);
     const map = useMap();
 
-    useEffect(() => {
-        console.log("position ", position)
-    }, [position])
+    const getPosition = (position) => {
+        if (position === null || position === undefined) return "";
+        else return position.toFixed(6)
+    }
 
     useEffect(() => {
         if (!position) return;
@@ -75,8 +76,8 @@ export default function MarkerWithAutoPopup({position, displayName, onCopy}) {
                             textAlign: 'center',
                         }}
                     >
-                        <div>lat: {position[0] ? position[0].toFixed(6) : ""}</div>
-                        <div>lon: {position[1] ? position[1].toFixed(6) : ""}</div>
+                        <div>lat: {getPosition(position[0])}</div>
+                        <div>lon: {getPosition(position[1])}</div>
                     </div>
 
                     <a
