@@ -24,27 +24,11 @@ export async function handler(event) {
         if (!res.ok) {
             return {statusCode: res.status, body: JSON.stringify({error: 'nominatim error'})};
         }
-
         const data = await res.json();
-
-        // const item = data[0];
-        // console.log(`geocodeDirect:`, data);
-        // return {
-        //     lat: parseFloat(item.lat),
-        //     lon: parseFloat(item.lon),
-        //     displayName: String(item.display_name ?? ''),
-        // };
-
-        const results = data.map((item) => ({
-            lat: parseFloat(item.lat),
-            lon: parseFloat(item.lon),
-            displayName: String(item.display_name ?? ''),
-        }));
-
         return {
             statusCode: 200,
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(results)
+            body: JSON.stringify(data)
         };
 
     } catch (e) {
