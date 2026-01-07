@@ -26,9 +26,6 @@ export async function handler(event) {
         }
 
         const data = await res.json();
-        if (!Array.isArray(data) || data.length === 0) {
-            throw new Error('결과가 없어요. 더 구체적으로 입력해보세요.');
-        }
 
         // const item = data[0];
         // console.log(`geocodeDirect:`, data);
@@ -43,7 +40,13 @@ export async function handler(event) {
             lon: parseFloat(item.lon),
             displayName: String(item.display_name ?? ''),
         }));
-        return results;
+
+        return {
+            statusCode: 200,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(results)
+        };
+
     } catch (e) {
         return {statusCode: 500, body: JSON.stringify({error: e.message})};
     }
